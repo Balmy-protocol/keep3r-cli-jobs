@@ -28,7 +28,7 @@ const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
 
   try {
     // check if job is workable
-    const [pairs, intervals] = await job.connect(args.keeperAddress).callStatic.workable({
+    const [pairs, intervals] = await job.callStatic.workable({
       blockTag: args.advancedBlock,
     });
 
@@ -39,7 +39,7 @@ const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
 
     try {
       // check if the call would work
-      await job.connect(args.keeperAddress).callStatic.work(pairs, intervals, {
+      await job.callStatic.work(pairs, intervals, {
         blockTag: args.advancedBlock,
       });
     } catch (err: any) {
@@ -52,7 +52,7 @@ const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
     }
 
     // create work tx
-    const tx = await job.connect(args.keeperAddress).populateTransaction.work(pairs, intervals, {
+    const tx = await job.populateTransaction.work(pairs, intervals, {
       nonce: args.keeperNonce,
       gasLimit: 2_000_000,
       type: 2,
