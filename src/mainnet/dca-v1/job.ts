@@ -1,39 +1,58 @@
 import { Job, JobWorkableGroup, makeid, prelog, toKebabCase } from '@keep3r-network/cli-utils';
-import { getGoerliSdk } from '../../eth-sdk-build';
+import { getMainnetSdk } from '../../eth-sdk-build';
 import metadata from './metadata.json';
 
 const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
   // setup logs
   const correlationId = toKebabCase(metadata.name);
+
   const logMetadata = {
     job: metadata.name,
     block: args.advancedBlock,
     logId: makeid(5),
   };
+
   const logConsole = prelog(logMetadata);
 
   // skip job if already in progress
   if (args.skipIds.includes(correlationId)) {
-    logConsole.log(`Skipping job`);
+    logConsole.log(`Job in progress, avoid running`);
     return args.subject.complete();
   }
 
   logConsole.log(`Trying to work`);
 
-  // setup job
-	const signer = args.fork.ethersProvider.getSigner(args.keeperAddress);
-	const { jobA: job } = getGoerliSdk(signer);
+  // setup job with default fork provider
+  const signer = args.fork.ethersProvider.getSigner(args.keeperAddress);
+  const { dca: job } = getMainnetSdk(signer);
 
   try {
     // check if job is workable
-    await job.callStatic.work({
+    const [pairs, intervals] = await job.callStatic.workable({
       blockTag: args.advancedBlock,
     });
 
-    logConsole.log(`Job is workable`);
+    logConsole.warn(`Job ${pairs.length ? 'is' : 'is not'} workable`);
+
+    // return if there are no pairs
+    if (!pairs.length) return args.subject.complete();
+
+    try {
+      // check if the call would work
+      await job.callStatic.work(pairs, intervals, {
+        blockTag: args.advancedBlock,
+      });
+    } catch (err: any) {
+      // handle errors
+      logConsole.warn('Workable but failed to work', {
+        message: err.message,
+      });
+      // return if there's any error
+      return args.subject.complete();
+    }
 
     // create work tx
-    const tx = await job.populateTransaction.work({
+    const tx = await job.populateTransaction.work(pairs, intervals, {
       nonce: args.keeperNonce,
       gasLimit: 2_000_000,
       type: 2,
@@ -51,8 +70,9 @@ const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
       workableGroups,
       correlationId,
     });
-  } catch (err: unknown) {
-    logConsole.warn('Simulation failed, probably in cooldown');
+  } catch (err: any) {
+    // handle error logs
+    logConsole.warn('Unexpected error', { message: err.message });
   }
 
   // finish job process

@@ -1,17 +1,17 @@
 {
-  "name": "@defi-wonderland/keep3r-cli-job-boilerplate",
-  "version": "1.0.1",
-  "description": "Keep3r CLI Job Boilerplate",
+  "name": "@mean-finance/keep3r-cli-jobs",
+  "version": "1.0.0",
+  "description": "Mean Finance Keep3r CLI Job",
   "keywords": [
+    "mean-finance",
     "keep3r",
     "cli",
     "job",
-    "boilerplate",
     "ethereum"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defi-wonderland/keep3r-cli-job-boilerplate.git"
+    "url": "git+https://github.com/mean-finance/keep3r-cli-jobs.git"
   },
   "license": "MIT",
   "author": "DeFi Wonderland",
@@ -38,8 +38,8 @@
   "devDependencies": {
     "@commitlint/cli": "12.1.4",
     "@commitlint/config-conventional": "12.1.4",
-    "@dethcrypto/eth-sdk": "^0.2.4",
-    "@dethcrypto/eth-sdk-client": "^0.1.6",
+    "@dethcrypto/eth-sdk": "0.2.4",
+    "@dethcrypto/eth-sdk-client": "0.1.6",
     "cross-env": "7.0.3",
     "prettier": "2.3.1",
     "prettier-plugin-organize-imports": "2.3.3",
