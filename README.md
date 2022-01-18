@@ -1,6 +1,6 @@
 # DCA CLI Job
 
-This job enable The Keep3r Network keepers on Ethereum to execute the different DCA jobs.
+This job enables The Keep3r Network keepers on Ethereum to execute the different DCA jobs.
 
 ## How to install
 
@@ -21,7 +21,7 @@ This job enable The Keep3r Network keepers on Ethereum to execute the different 
 
 ## How to test
 On Keep3r-CLI, use the following command:
-`yarn simulate --job PATH/TO/dca-v1-keep3r-cli-job/dist/src/mainnet/dca --block 14029364 --config .config.simulation.json`
+`yarn simulate --job node_modules/Mean-Finance/keep3r-cli-jobs/dist/src/mainnet/dca --block 14029364 --config .config.simulation.json`
 
 ## Keeper Requirements
 

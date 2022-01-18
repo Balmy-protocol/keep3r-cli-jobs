@@ -1,6 +1,5 @@
 import { Job, JobWorkableGroup, makeid, prelog, toKebabCase } from '@keep3r-network/cli-utils';
-import { Contract } from 'ethers';
-import DCAKeep3rJobABI from '../abi/DCAKeep3rJob.json';
+import { getMainnetSdk } from '../../eth-sdk-build';
 import metadata from './metadata.json';
 
 const jobAddress = '0xEcbA21E26466727d705d48cb0a8DE42B11767Bf7';
@@ -21,7 +20,8 @@ const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
 
   logConsole.log(`Trying to work`);
 
-  const job = new Contract(jobAddress, DCAKeep3rJobABI, args.fork.ethersProvider);
+  const signer = args.fork.ethersProvider.getSigner(args.keeperAddress);
+  const { dca: job } = getMainnetSdk(signer);
 
   try {
     const [pairs, intervals] = await job.connect(args.keeperAddress).callStatic.workable({
