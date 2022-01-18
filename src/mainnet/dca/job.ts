@@ -2,8 +2,6 @@ import { Job, JobWorkableGroup, makeid, prelog, toKebabCase } from '@keep3r-netw
 import { getMainnetSdk } from '../../eth-sdk-build';
 import metadata from './metadata.json';
 
-const jobAddress = '0xEcbA21E26466727d705d48cb0a8DE42B11767Bf7';
-
 const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
   const correlationId = toKebabCase(metadata.name);
   const logMetadata = {
