@@ -1,17 +1,17 @@
 {
-  "name": "@defi-wonderland/keep3r-cli-job-boilerplate",
+  "name": "@Mean-Finance/keep3r-cli-jobs",
   "version": "1.0.1",
-  "description": "Keep3r CLI Job Boilerplate",
+  "description": "Mean Finance Keep3r CLI Job",
   "keywords": [
+    "mean-finance",
     "keep3r",
     "cli",
     "job",
-    "boilerplate",
     "ethereum"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/defi-wonderland/keep3r-cli-job-boilerplate.git"
+    "url": "git+https://github.com/Mean-Finance/keep3r-cli-jobs.git"
   },
   "license": "MIT",
   "author": "DeFi Wonderland",
