@@ -3,9 +3,9 @@ import { getMainnetSdk } from '../../eth-sdk-build';
 import metadata from './metadata.json';
 
 const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
+  // setup logs
   const correlationId = toKebabCase(metadata.name);
 
-  // setup logs
   const logMetadata = {
     job: metadata.name,
     block: args.advancedBlock,
@@ -14,7 +14,7 @@ const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
 
   const logConsole = prelog(logMetadata);
 
-  // skip strategy if already in progress
+  // skip job if already in progress
   if (args.skipIds.includes(correlationId)) {
     logConsole.log(`Job in progress, avoid running`);
     return args.subject.complete();
