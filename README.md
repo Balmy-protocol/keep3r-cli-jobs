@@ -1,4 +1,4 @@
-[![image](https://img.shields.io/npm/v/@Mean-Finance/keep3r-cli-jobs.svg?style=flat-square)](https://www.npmjs.org/package/@Mean-Finance/keep3r-cli-jobs)
+[![image](https://img.shields.io/npm/v/@mean-finance/keep3r-cli-jobs.svg?style=flat-square)](https://www.npmjs.org/package/@mean-finance/keep3r-cli-jobs)
 
 # DCA CLI Job
 
@@ -7,7 +7,7 @@ This job enables The Keep3r Network keepers on Ethereum to execute the different
 ## How to install
 
 1. Open a terminal inside your [CLI](https://github.com/keep3r-network/cli) setup
-2. Run `yarn add @Mean-Finance/keep3r-cli-jobs`
+2. Run `yarn add @mean-finance/keep3r-cli-jobs`
 3. Add job inside your CLI config file. It should look something like this:
 ```
 {
@@ -15,7 +15,7 @@ This job enables The Keep3r Network keepers on Ethereum to execute the different
     "jobs": [
         ...,
         {
-            "path": "node_modules/Mean-Finance/keep3r-cli-jobs/dist/src/mainnet/dca"
+            "path": "node_modules/mean-finance/keep3r-cli-jobs/dist/src/mainnet/dca"
         }
     ]
 }
@@ -23,7 +23,7 @@ This job enables The Keep3r Network keepers on Ethereum to execute the different
 
 ## How to test
 On Keep3r-CLI, use the following command:
-`yarn simulate --job node_modules/Mean-Finance/keep3r-cli-jobs/dist/src/mainnet/dca --block 14029364 --config .config.simulation.json`
+`yarn simulate --job node_modules/mean-finance/keep3r-cli-jobs/dist/src/mainnet/dca --block 14029364 --config .config.simulation.json`
 
 ## Keeper Requirements
 
