@@ -1,9 +1,11 @@
 import { Job, JobWorkableGroup, makeid, prelog, toKebabCase } from '@keep3r-network/cli-utils';
-import { getGoerliSdk } from '../../eth-sdk-build';
+import { Contract } from 'ethers';
+import DCAKeep3rJobABI from '../../abi/DCAKeep3rJob.json';
 import metadata from './metadata.json';
 
+const jobAddress = '0xEcbA21E26466727d705d48cb0a8DE42B11767Bf7';
+
 const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
-  // setup logs
   const correlationId = toKebabCase(metadata.name);
   const logMetadata = {
     job: metadata.name,
@@ -12,50 +14,60 @@ const getWorkableTxs: Job['getWorkableTxs'] = async (args) => {
   };
   const logConsole = prelog(logMetadata);
 
-  // skip job if already in progress
   if (args.skipIds.includes(correlationId)) {
-    logConsole.log(`Skipping job`);
+    logConsole.log(`Job in progress, avoid running`);
     return args.subject.complete();
   }
 
   logConsole.log(`Trying to work`);
 
-  // setup job
-	const signer = args.fork.ethersProvider.getSigner(args.keeperAddress);
-	const { jobA: job } = getGoerliSdk(signer);
+  const job = new Contract(jobAddress, DCAKeep3rJobABI, args.fork.ethersProvider);
 
   try {
-    // check if job is workable
-    await job.callStatic.work({
+    const [pairs, intervals] = await job.connect(args.keeperAddress).callStatic.workable({
       blockTag: args.advancedBlock,
     });
 
-    logConsole.log(`Job is workable`);
+    logConsole.warn(`Job ${pairs.length ? 'is' : 'is not'} workable`);
+    if (!pairs.length) return args.subject.complete();
 
-    // create work tx
-    const tx = await job.populateTransaction.work({
-      nonce: args.keeperNonce,
-      gasLimit: 2_000_000,
-      type: 2,
-    });
+    try {
+      await job.connect(args.keeperAddress).callStatic.work(pairs, intervals, {
+        blockTag: args.advancedBlock,
+      });
+    } catch (err: any) {
+      logConsole.warn('Workable but failed to work', {
+        message: err.message,
+      });
+      return args.subject.complete();
+    }
 
-    // create a workable group every bundle burst
-    const workableGroups: JobWorkableGroup[] = new Array(args.bundleBurst).fill(null).map((_, index) => ({
-      targetBlock: args.targetBlock + index,
-      txs: [tx],
-      logId: `${logMetadata.logId}-${makeid(5)}`,
-    }));
+    const workableGroups: JobWorkableGroup[] = [];
 
-    // submit all bundles
+    for (let index = 0; index < args.bundleBurst; index++) {
+      const tx = await job.connect(args.keeperAddress).populateTransaction.work(pairs, intervals, {
+        nonce: args.keeperNonce,
+        gasLimit: 2_000_000,
+        type: 2,
+      });
+
+      workableGroups.push({
+        targetBlock: args.targetBlock + index,
+        txs: [tx],
+        logId: `${logMetadata.logId}-${makeid(5)}`,
+      });
+    }
+
     args.subject.next({
       workableGroups,
       correlationId,
     });
-  } catch (err: unknown) {
-    logConsole.warn('Simulation failed, probably in cooldown');
+
+    // send it to the core in case it passed the simulation
+  } catch (err: any) {
+    logConsole.warn('Unexpected error', { message: err.message });
   }
 
-  // finish job process
   args.subject.complete();
 };
 
