@@ -1,3 +1,5 @@
+[![image](https://img.shields.io/npm/v/@Mean-Finance/keep3r-cli-jobs.svg?style=flat-square)](https://www.npmjs.org/package/@Mean-Finance/keep3r-cli-jobs)
+
 # DCA CLI Job
 
 This job enables The Keep3r Network keepers on Ethereum to execute the different DCA jobs.
