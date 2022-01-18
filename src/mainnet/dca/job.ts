@@ -1,6 +1,6 @@
 import { Job, JobWorkableGroup, makeid, prelog, toKebabCase } from '@keep3r-network/cli-utils';
 import { Contract } from 'ethers';
-import DCAKeep3rJobABI from '../../abi/DCAKeep3rJob.json';
+import DCAKeep3rJobABI from '../abi/DCAKeep3rJob.json';
 import metadata from './metadata.json';
 
 const jobAddress = '0xEcbA21E26466727d705d48cb0a8DE42B11767Bf7';
